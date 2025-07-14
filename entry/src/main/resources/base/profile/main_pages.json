@@ -1,7 +1,15 @@
 {
   "src": [
     "pages/Index",
-    "pages/PatientManagement"
+    "pages/PatientManagement",
+    "pages/patient/PatientHome",
+    "pages/patient/PatientCategory",
+    "pages/patient/PatientDetail",
+    "pages/patient/MsgList",
+    "pages/patient/MsgDetail",
+    "pages/patient/MsgCreate",
+    "pages/patient/ReceiverMode",
+    "pages/patient/ReceiverSelect"
   ]
 }
 

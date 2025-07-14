@@ -5,7 +5,7 @@ import { ListItemBasic } from '../../common/components'
 @Component
 struct MsgDetail {
   build() {
-    let msg = patientStore.messages.find(m => m.id === Number(router.getParams().id))
+    let msg = patientStore.messages.find(m => m.id === Number(router.getParams().id));
     Column() {
       if (msg) {
         Text(msg.title).fontSize(18)

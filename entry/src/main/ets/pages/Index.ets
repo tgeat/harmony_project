@@ -1,23 +1,30 @@
+import router from "@ohos.router";
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World';
 
   build() {
-    RelativeContainer() {
+    Column() {
       Text(this.message)
         .id('HelloWorld')
         .fontSize($r('app.float.page_text_font_size'))
         .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
-        })
         .onClick(() => {
           this.message = 'Welcome';
+        })
+
+      Button('患者管理')
+        .id('PatientManageBtn')
+        .margin({ top: 20 })
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/PatientManagement' })
         })
     }
     .height('100%')
     .width('100%')
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Center)
   }
 }
+

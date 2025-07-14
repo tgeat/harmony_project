@@ -18,7 +18,7 @@ struct Index {
         .id('PatientManageBtn')
         .margin({ top: 20 })
         .onClick(() => {
-          router.pushUrl({ url: 'pages/PatientManagement' })
+          router.pushUrl({ url: '/patient/home' })
         })
     }
     .height('100%')

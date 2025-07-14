@@ -1,3 +1,4 @@
+@Entry
 @Component
 struct PatientManagement {
   build() {

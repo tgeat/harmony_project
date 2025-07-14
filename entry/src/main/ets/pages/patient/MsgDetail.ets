@@ -6,7 +6,7 @@ import { ListItemBasic } from '../../common/components'
 struct MsgDetail {
   build() {
     let msg = patientStore.messages.find(m => m.id === Number(router.getParams().id));
-    Column() {
+    Column(() => {
       if (msg) {
         Text(msg.title).fontSize(18)
         Text(msg.createTime)
@@ -15,8 +15,8 @@ struct MsgDetail {
           ListItemBasic({ left: `接收人ID：${r}` })
         })
       }
-    }
-    .width('100%')
-    .height('100%')
+    })
+      .width('100%')
+      .height('100%')
   }
 }

@@ -1,6 +1,7 @@
 import router from '@ohos.router'
 import { patientStore } from '../../store/patientStore'
 import { SearchBar, ListItemBasic } from '../../common/components'
+import type { Patient } from '../../model/patient'
 
 @Component
 struct PatientCategory {
@@ -13,7 +14,8 @@ struct PatientCategory {
         .margin({ bottom: 10 })
 
       List() {
-        ForEach(patientStore.patientsMap.get(router.getParams().type) || [], (item: any) => {
+        const { type } = router.getParams() as { type: string }
+        ForEach(patientStore.patientsMap.get(type) || [], (item: Patient) => {
           ListItemBasic({
             left: item.name
           })
@@ -23,6 +25,9 @@ struct PatientCategory {
     }
     .width('100%')
     .height('100%')
-    .onAppear(() => patientStore.fetchPatients(router.getParams().type))
+    .onAppear(() => {
+      const { type } = router.getParams() as { type: string }
+      patientStore.fetchPatients(type)
+    })
   }
 }

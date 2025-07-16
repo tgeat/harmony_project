@@ -7,7 +7,7 @@ import { SearchBar, ListItemBasic } from '../../common/components'
 struct PatientHome {
   @State search: string = ''
 
-  private goto(source: string) {
+  private goto(source: string): void {
     router.pushUrl({ url: `/patient/category?type=${source}` })
   }
 
@@ -31,9 +31,5 @@ struct PatientHome {
     }
     .width('100%')
     .height('100%')
-    .toolbar({
-      title: '患者管理',
-      menu: [{ value: '群发消息', action: () => router.pushUrl({ url: '/patient/msgList' }) }]
-    })
   }
 }

@@ -21,7 +21,8 @@ struct MsgDetail {
     .width('100%')
     .height('100%')
     .onAppear(async () => {
-      this.msg = await getMessage(Number(router.getParams().id))
+      const { id } = router.getParams() as { id: string }
+      this.msg = await getMessage(Number(id))
     })
   }
 }

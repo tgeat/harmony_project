@@ -1,6 +1,7 @@
 import router from '@ohos.router'
 import { patientStore } from '../../store/patientStore'
 import { SearchBar, ListItemBasic } from '../../common/components'
+import type { Message } from '../../model/patient'
 
 @Component
 struct MsgList {
@@ -12,7 +13,7 @@ struct MsgList {
       })
         .margin({ bottom: 10 })
       List() {
-        ForEach(patientStore.messages, (msg: any) => {
+        ForEach(patientStore.messages, (msg: Message) => {
           ListItemBasic({ left: msg.title })
             .onClick(() => router.pushUrl({ url: `/patient/msgDetail?id=${msg.id}` }))
         })

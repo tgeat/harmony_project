@@ -1,6 +1,7 @@
 import router from '@ohos.router'
 import { patientStore } from '../../store/patientStore'
 import { SearchBar } from '../../common/components'
+import type { Patient } from '../../model/patient'
 
 @Component
 struct ReceiverSelect {
@@ -9,7 +10,7 @@ struct ReceiverSelect {
       SearchBar({ placeholder: '搜索', onChange: () => {} })
         .margin({ bottom: 10 })
       List() {
-        ForEach(patientStore.patientsMap.get('consult') || [], (p: any) => {
+        ForEach(patientStore.patientsMap.get('consult') || [], (p: Patient) => {
           ListItem() {
             Checkbox({ checked: patientStore.selectedIds.includes(p.id) })
             Text(p.name)

@@ -21,7 +21,8 @@ struct PatientDetail {
     .width('100%')
     .height('100%')
     .onAppear(async () => {
-      const detail = await getPatientDetail(Number(router.getParams().id))
+      const { id } = router.getParams() as { id: string }
+      const detail = await getPatientDetail(Number(id))
       this.patient = detail
     })
   }

@@ -6,8 +6,8 @@ import { SearchBar, ListItemBasic } from '../../common/components'
 struct PatientHome {
   @State search: string = ''
 
-  private goto(source: string): void {
-    router.pushUrl({ url: `/patient/category?type=${source}` })
+  private goto(page: 'consult' | 'register' | 'prescribe'): void {
+    router.pushUrl({ url: `/patient/category?type=${page}` })
   }
 
   build() {

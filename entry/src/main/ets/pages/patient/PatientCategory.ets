@@ -3,8 +3,10 @@ import { patientStore } from '../../store/patientStore'
 import { SearchBar, ListItemBasic } from '../../common/components'
 import type { Patient } from '../../model/patient'
 
+@Entry
 @Component
 struct PatientCategory {
+  private type: 'consult' | 'register' | 'prescribe' = 'consult'
   build() {
     Column() {
       SearchBar({
@@ -14,8 +16,7 @@ struct PatientCategory {
         .margin({ bottom: 10 })
 
       List() {
-        const { type } = router.getParams() as { type: string }
-        ForEach(patientStore.patientsMap.get(type) || [], (item: Patient) => {
+        ForEach(patientStore.patientsMap.get(this.type) || [], (item: Patient) => {
           ListItemBasic({
             left: item.name
           })
@@ -26,8 +27,11 @@ struct PatientCategory {
     .width('100%')
     .height('100%')
     .onAppear(() => {
-      const { type } = router.getParams() as { type: string }
-      patientStore.fetchPatients(type)
+      const params = router.getParams() as {
+        type: 'consult' | 'register' | 'prescribe'
+      }
+      this.type = params.type
+      patientStore.fetchPatients(this.type)
     })
   }
 }

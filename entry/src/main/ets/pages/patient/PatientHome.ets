@@ -19,14 +19,14 @@ struct PatientHome {
       })
         .margin({ bottom: 10 })
 
-      Column() {
-        ListItemBasic({ left: '问诊' })
-          .onClick(() => this.goto('consult'))
-        ListItemBasic({ left: '挂号' })
-          .onClick(() => this.goto('register'))
-        ListItemBasic({ left: '开药' })
-          .onClick(() => this.goto('prescribe'))
-      }
+        Column() {
+          ListItemBasic({ left: '问诊' })
+            .onClick(() => this.goto('consult'))
+          ListItemBasic({ left: '挂号' })
+            .onClick(() => this.goto('register'))
+          ListItemBasic({ left: '开药' })
+            .onClick(() => this.goto('prescribe'))
+        }
     }
     .width('100%')
     .height('100%')

@@ -1,6 +1,7 @@
 import router from '@ohos.router'
 import { patientStore } from '../../store/patientStore'
 import { SearchBar, ListItemBasic } from '../../common/components'
+@Entry
 @Component
 struct PatientHome {
   @State search: string = ''

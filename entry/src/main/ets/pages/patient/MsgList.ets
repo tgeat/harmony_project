@@ -20,6 +20,5 @@ struct MsgList {
     }
     .width('100%')
     .height('100%')
-    .toolbar({ title: '消息列表', menu: [{ value: '新建', action: () => router.pushUrl({ url: '/patient/msgCreate' }) }] })
   }
 }

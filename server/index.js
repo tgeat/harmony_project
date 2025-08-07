@@ -16,6 +16,25 @@ const messages = [
   { id: 2, title: '节日问候', content: '祝您身体健康，节日快乐', createTime: '2020-05-01 08:30:00', receivers: [2, 3] }
 ];
 
+app.post('/api/patients', (req, res) => {
+  const id = patients.length ? patients[patients.length - 1].id + 1 : 1;
+  const newPatient = {
+    id,
+    name: req.body.name || '',
+    gender: req.body.gender || 'male',
+    age: req.body.age || 0,
+    mobile: req.body.mobile || '',
+    idCard: req.body.idCard || '',
+    ssn: req.body.ssn || '',
+    city: req.body.city || '',
+    avatar: req.body.avatar || '',
+    source: req.body.source || 'consult',
+    createTime: new Date().toISOString().replace('T', ' ').split('.')[0]
+  };
+  patients.push(newPatient);
+  res.status(201).json(newPatient);
+});
+
 app.get('/api/patients', (req, res) => {
   const { source, keyword } = req.query;
   let result = patients;

@@ -51,12 +51,16 @@ struct Huanzhexinxi {
             .fontWeight(600)
             .margin({ left: 10 })
       }.width('100%')
+      .onClick(()=>{
+        router.back()
+      })
       List() {
         ForEach(this.patientData, (item: Type1, index) => {
           ListItem() {
             Row() {
               Text(item.title)
                 .fontSize(16).margin({left:20})
+                .width(80)
               // 自动填充剩余空间，将文字和人数分开
               Row(){
                 Text(item.count)

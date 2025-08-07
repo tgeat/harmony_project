@@ -65,11 +65,17 @@ struct Xinjianhuanzhe {
 
       Row() {
         Button('男')
+          .fontColor(this.gender === 'male' ? Color.White : Color.Black)
+          .backgroundColor(this.gender === 'male' ? Color.Blue : Color.White)
+          .border({ width: 1, color: Color.Blue })
           .onClick(() => {
             this.gender = 'male';
           })
         Button('女')
           .margin({ left: 10 })
+          .fontColor(this.gender === 'female' ? Color.White : Color.Black)
+          .backgroundColor(this.gender === 'female' ? Color.Blue : Color.White)
+          .border({ width: 1, color: Color.Blue })
           .onClick(() => {
             this.gender = 'female';
           })
@@ -115,16 +121,25 @@ struct Xinjianhuanzhe {
 
       Row() {
         Button('问诊患者')
+          .fontColor(this.source === 'consult' ? Color.White : Color.Black)
+          .backgroundColor(this.source === 'consult' ? Color.Blue : Color.White)
+          .border({ width: 1, color: Color.Blue })
           .onClick(() => {
             this.source = 'consult';
           })
         Button('挂号患者')
           .margin({ left: 10 })
+          .fontColor(this.source === 'register' ? Color.White : Color.Black)
+          .backgroundColor(this.source === 'register' ? Color.Blue : Color.White)
+          .border({ width: 1, color: Color.Blue })
           .onClick(() => {
             this.source = 'register';
           })
         Button('开药患者')
           .margin({ left: 10 })
+          .fontColor(this.source === 'prescribe' ? Color.White : Color.Black)
+          .backgroundColor(this.source === 'prescribe' ? Color.Blue : Color.White)
+          .border({ width: 1, color: Color.Blue })
           .onClick(() => {
             this.source = 'prescribe';
           })
@@ -134,6 +149,9 @@ struct Xinjianhuanzhe {
 
       Button('保存')
         .margin({ top: 40, left: 20, right: 20 })
+        .fontColor(Color.Black)
+        .backgroundColor(Color.White)
+        .border({ width: 1, color: Color.Blue })
         .onClick(() => {
           this.submit();
         })

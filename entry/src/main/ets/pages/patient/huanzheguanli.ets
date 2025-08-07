@@ -63,13 +63,22 @@ struct Huanzheguanli {
           .fontWeight(600)
           .margin({left:10})
         }
-        Text('群发消息')
-          .fontColor('#0062FF')
-          .fontSize(16)
-          .margin({right:10})
-          .onClick(()=>{
-            router.pushUrl({url:'pages/patient/xiaoxiliebiao'})
-          })
+        Row(){
+          Text('新建患者')
+            .fontColor('#0062FF')
+            .fontSize(16)
+            .margin({right:20})
+            .onClick(()=>{
+              router.pushUrl({url:'pages/patient/xinjianhuanzhe'})
+            })
+          Text('群发消息')
+            .fontColor('#0062FF')
+            .fontSize(16)
+            .margin({right:10})
+            .onClick(()=>{
+              router.pushUrl({url:'pages/patient/xiaoxiliebiao'})
+            })
+        }
       }.justifyContent(FlexAlign.SpaceBetween).width('100%')
       Divider()
         .width('100%')

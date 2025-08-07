@@ -96,3 +96,11 @@ export async function sendMessage(payload: Partial<Message>): Promise<void> {
     extraData: JSON.stringify(payload)
   });
 }
+
+export async function createPatient(payload: Partial<Patient>): Promise<Patient> {
+  return await requestJson<Patient>(`${BASE_URL}/patients`, {
+    method: http.RequestMethod.POST,
+    header: { 'Content-Type': 'application/json' },
+    extraData: JSON.stringify(payload)
+  });
+}

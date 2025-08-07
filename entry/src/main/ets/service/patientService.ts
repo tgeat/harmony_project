@@ -104,3 +104,9 @@ export async function createPatient(payload: Partial<Patient>): Promise<Patient>
     extraData: JSON.stringify(payload)
   });
 }
+
+export async function deletePatient(id: number): Promise<void> {
+  await requestJson<void>(`${BASE_URL}/patients/${id}`, {
+    method: http.RequestMethod.DELETE
+  });
+}

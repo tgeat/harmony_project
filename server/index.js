@@ -35,6 +35,16 @@ app.post('/api/patients', (req, res) => {
   res.status(201).json(newPatient);
 });
 
+app.delete('/api/patients/:id', (req, res) => {
+  const index = patients.findIndex(p => p.id === Number(req.params.id));
+  if (index !== -1) {
+    patients.splice(index, 1);
+    res.status(204).send();
+  } else {
+    res.status(404).send();
+  }
+});
+
 app.get('/api/patients', (req, res) => {
   const { source, keyword } = req.query;
   let result = patients;

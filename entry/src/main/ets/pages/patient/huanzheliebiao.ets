@@ -1,6 +1,6 @@
 import router from '@ohos.router';
 import image from '@ohos.multimedia.image';
-import { getPatientsBySource } from '../../service/patientService';
+import { getPatientsBySource, deletePatient as deletePatientApi } from '../../service/patientService';
 import type { Patient } from '../../model/patient';
 class DividerTmp {
   strokeWidth: Length = 1;
@@ -41,6 +41,12 @@ struct Huanzheliebiao {
   @State searchResults:Array<type1> = [];
   @State title: string = '';
   @State source: 'consult' | 'register' | 'prescribe' = 'consult';
+
+  async removePatient(id: number) {
+    await deletePatientApi(id);
+    this.patientList = this.patientList.filter(p => p.id !== id);
+    this.searchResults = this.searchResults.filter(p => p.id !== id);
+  }
 
   mapPatient(p: Patient): type1 {
     return {
@@ -116,10 +122,17 @@ struct Huanzheliebiao {
         List() {
           ForEach(this.searchResults, (item: type1) => {
             ListItem() {
-              Row() {
+              Row({ space: 10 }) {
                 Text(item.name)
                   .fontSize(16)
                   .margin({ left: 20 })
+                Button('删除')
+                  .fontSize(14)
+                  .fontColor(Color.White)
+                  .backgroundColor(Color.Red)
+                  .onClick(() => {
+                    this.removePatient(item.id);
+                  })
               }
               .width('100%')
               .height('8%')
@@ -150,15 +163,15 @@ Column(){
       List() {
         ForEach(this.patientList, (item: type1, index) => {
           ListItem() {
-            Row() {
+            Row({ space: 10 }) {
               Image(item.img)
                 .width(20)
                 .height(30)
-             Column(){
-                Row({space:10}){
+              Column() {
+                Row({ space: 10 }) {
                   Text(item.name)
                     .fontSize(16)
-                    .margin({left:10})
+                    .margin({ left: 10 })
                   Text(item.gender)
                     .fontSize(14)
                     .fontColor('#CDCDCD')
@@ -170,15 +183,22 @@ Column(){
                     .backgroundColor('#EDF0FD')
                     .borderRadius(5)
                 }
-                Row(){
+                Row() {
                   Text(item.text)
                     .fontSize(14)
                     .fontColor('#CDCDCD')
                   Text(item.time)
                     .fontSize(14)
                     .fontColor('#CDCDCD')
-                }.margin({top:10})
-             }
+                }.margin({ top: 10 })
+              }
+              Button('删除')
+                .fontSize(14)
+                .fontColor(Color.White)
+                .backgroundColor(Color.Red)
+                .onClick(() => {
+                  this.removePatient(item.id);
+                })
             }
 
             .width('100%')
@@ -186,8 +206,8 @@ Column(){
             .padding(10)
             .backgroundColor('#FFFFFF')
             .onClick(() => {
-                  router.pushUrl({ url: 'pages/patient/huanzhexinxi', params: { id: item.id } });
-              })
+              router.pushUrl({ url: 'pages/patient/huanzhexinxi', params: { id: item.id } });
+            })
           }
         })
         ListItem(){

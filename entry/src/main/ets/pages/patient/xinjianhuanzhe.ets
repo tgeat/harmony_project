@@ -30,7 +30,9 @@ struct Xinjianhuanzhe {
   build() {
     Column() {
       Row() {
-        Text('返回')
+        Image($r('app.media.arrow_left'))
+          .width(30)
+          .height(30)
           .onClick(() => {
             router.back();
           })

@@ -1,5 +1,6 @@
 import router from '@ohos.router';
 import { getPatientDetail } from '../../service/patientService';
+import type { Patient } from '../../model/patient';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -13,6 +14,10 @@ interface Type1 {
   title: string;
   count: string;
 }
+
+interface DetailParams {
+  id: number;
+}
 @Entry
 @Component
 struct Huanzhexinxi {
@@ -20,9 +25,9 @@ struct Huanzhexinxi {
   @State patientData: Array<Type1> = [];
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   async aboutToAppear() {
-    const params = router.getParams() as { id: number };
+    const params = router.getParams() as DetailParams;
     const id = params?.id ?? 0;
-    const p = await getPatientDetail(id);
+    const p: Patient = await getPatientDetail(id);
     this.patientData = [
       { title: '患者姓名', count: p.name},
       { title: '性别', count: p.gender === 'male' ? '男' : '女' },

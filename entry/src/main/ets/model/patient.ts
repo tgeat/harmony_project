@@ -8,7 +8,7 @@ export interface Patient {
   ssn: string
   city: string
   avatar: string
-  source: string
+  source: 'consult' | 'register' | 'prescribe'
   createTime: string
 }
 

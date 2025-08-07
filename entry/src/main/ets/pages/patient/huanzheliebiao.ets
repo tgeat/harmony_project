@@ -1,6 +1,7 @@
 import router from '@ohos.router';
 import image from '@ohos.multimedia.image';
 import { getPatientsBySource } from '../../service/patientService';
+import type { Patient } from '../../model/patient';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -20,6 +21,16 @@ interface type1{
   text:string;
   time:string;
 }
+
+interface SourceParams {
+  source: 'consult' | 'register' | 'prescribe';
+}
+
+interface LabelMap {
+  consult: string;
+  register: string;
+  prescribe: string;
+}
 @Entry
 @Component
 struct Huanzheliebiao {
@@ -29,12 +40,12 @@ struct Huanzheliebiao {
   @State patientList:Array<type1> = [];
   @State title: string = '';
   async aboutToAppear() {
-    const params = router.getParams() as { source: 'consult' | 'register' | 'prescribe' };
+    const params = router.getParams() as SourceParams;
     const source = params?.source ?? 'consult';
-    const labelMap: Record<string, string> = { consult: '问诊患者', register: '挂号患者', prescribe: '开药患者' };
+    const labelMap: LabelMap = { consult: '问诊患者', register: '挂号患者', prescribe: '开药患者' };
     this.title = labelMap[source];
     const list = await getPatientsBySource(source);
-    this.patientList = list.map(p => ({
+    this.patientList = list.map((p: Patient): type1 => ({
       id: p.id,
       img: $r('app.media.img_3'),
       name: p.name,

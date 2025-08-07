@@ -22,6 +22,19 @@ struct Huanzheguanli {
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   @State patientData: Array<Type1> = [];
+  @State searchResults: Patient[] = [];
+  async onSearch() {
+    if (!this.searchText) {
+      this.searchResults = [];
+      return;
+    }
+    const lists = await Promise.all([
+      getPatientsBySource('consult', this.searchText),
+      getPatientsBySource('register', this.searchText),
+      getPatientsBySource('prescribe', this.searchText)
+    ]);
+    this.searchResults = ([] as Patient[]).concat(...lists);
+  }
   async aboutToAppear() {
     const results = await Promise.all([
       getPatientsBySource('consult'),
@@ -67,7 +80,33 @@ struct Huanzheguanli {
           value: this.searchText
         }).backgroundColor('#FFFFFF')
           .borderWidth(0.1).placeholderFont({size:15,weight:300})
+          .onChange((value: string) => {
+            this.searchText = value;
+          })
+          .onSubmit(() => {
+            this.onSearch();
+          })
       }.width('80%').justifyContent(FlexAlign.Center).height('10%')
+      if (this.searchResults.length > 0) {
+        List() {
+          ForEach(this.searchResults, (p: Patient) => {
+            ListItem() {
+              Row() {
+                Text(p.name)
+                  .fontSize(16)
+                  .margin({ left: 20 })
+              }
+              .width('100%')
+              .height('8%')
+              .padding(10)
+              .backgroundColor('#FFFFFF')
+              .onClick(() => {
+                router.pushUrl({ url: 'pages/patient/huanzhexinxi', params: { id: p.id } });
+              })
+            }
+          })
+        }.width('100%').divider(this.egDivider)
+      }
       Column() {
         Row().width('100%').height(10).backgroundColor('#E4E4E4')
       }

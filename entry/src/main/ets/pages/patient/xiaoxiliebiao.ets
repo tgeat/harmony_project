@@ -1,5 +1,6 @@
 import router from '@ohos.router';
 import { getMessages } from '../../service/patientService';
+import type { Message } from '../../model/patient';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -25,9 +26,16 @@ struct Xiaoxiliebiao {
   @State xiaoxilist:Array<type2>=[];
   async aboutToAppear() {
     const list = await getMessages();
-    this.xiaoxilist = list.map(m => {
+    this.xiaoxilist = list.map((m: Message): type2 => {
       const parts = m.createTime.split(' ');
-      return { title: m.title, content: m.content, img: $r('app.media.arrow_right'), date: parts[0], time: parts[1] };
+      const item: type2 = {
+        title: m.title,
+        content: m.content,
+        img: $r('app.media.arrow_right'),
+        date: parts[0],
+        time: parts[1]
+      };
+      return item;
     });
   }
   build() {

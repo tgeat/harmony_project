@@ -1,5 +1,6 @@
 import router from '@ohos.router';
 import { getPatientsBySource } from '../../service/patientService';
+import type { Patient } from '../../model/patient';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -22,11 +23,14 @@ struct Huanzheguanli {
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   @State patientData: Array<Type1> = [];
   async aboutToAppear() {
-    const [consult, register, prescribe] = await Promise.all([
+    const results = await Promise.all([
       getPatientsBySource('consult'),
       getPatientsBySource('register'),
       getPatientsBySource('prescribe')
     ]);
+    const consult: Patient[] = results[0];
+    const register: Patient[] = results[1];
+    const prescribe: Patient[] = results[2];
     this.patientData = [
       { title: '问诊患者', count: `${consult.length}人`, icon: $r('app.media.arrow_right') },
       { title: '挂号患者', count: `${register.length}人`, icon: $r('app.media.arrow_right') },

@@ -79,7 +79,7 @@ struct Huanzheguanli {
             .onClick(()=>{
               router.pushUrl({url:'pages/patient/xinjianhuanzhe'})
             })
-          Text('群发消息')
+          Text('消息通知')
             .fontColor('#0062FF')
             .fontSize(16)
             .margin({right:10})

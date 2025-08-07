@@ -1,94 +1,148 @@
+/* server.js ───────────────────────────────────────────── */
 const express = require('express');
 const cors = require('cors');
+const Database = require('better-sqlite3');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const patients = [
-  { id: 1, name: '李四', gender: 'male', age: 43, mobile: '18800000001', idCard: '110101199001010011', ssn: 'SN001', city: '北京', avatar: '', source: 'consult', createTime: '2020-04-03 10:00:00' },
-  { id: 2, name: '王五', gender: 'female', age: 32, mobile: '18800000002', idCard: '110101199001010022', ssn: 'SN002', city: '上海', avatar: '', source: 'register', createTime: '2020-04-05 11:00:00' },
-  { id: 3, name: '赵六', gender: 'male', age: 25, mobile: '18800000003', idCard: '110101199001010033', ssn: 'SN003', city: '广州', avatar: '', source: 'prescribe', createTime: '2020-04-08 12:00:00' }
-];
+// ① 初始化 / 打开数据库文件（不存在会自动创建）
+const db = new Database('./clinic.db');
 
-const messages = [
-  { id: 1, title: '停诊通知', content: '由于某种原因，原定于2020.04.13日停诊', createTime: '2020-04-13 13:00:21', receivers: [1, 2] },
-  { id: 2, title: '节日问候', content: '祝您身体健康，节日快乐', createTime: '2020-05-01 08:30:00', receivers: [2, 3] }
-];
+// ② 初始化表（只在第一次运行时真正创建）
+db.exec(`
+  CREATE TABLE IF NOT EXISTS patients (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT    NOT NULL,
+    gender      TEXT    NOT NULL,
+    age         INTEGER NOT NULL,
+    mobile      TEXT,
+    idCard      TEXT,
+    ssn         TEXT,
+    city        TEXT,
+    avatar      TEXT,
+    source      TEXT    NOT NULL,
+    createTime  TEXT    NOT NULL
+  );
 
+  CREATE TABLE IF NOT EXISTS messages (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT    NOT NULL,
+    content     TEXT    NOT NULL,
+    createTime  TEXT    NOT NULL
+  );
+
+  /* 关联表：一条消息可发给多名患者 */
+  CREATE TABLE IF NOT EXISTS message_receivers (
+    msgId       INTEGER,
+    patientId   INTEGER,
+    PRIMARY KEY (msgId, patientId)
+  );
+`);
+
+/* ---------- PATIENTS ---------- */
+
+/* 新增患者 */
 app.post('/api/patients', (req, res) => {
-  const id = patients.length ? patients[patients.length - 1].id + 1 : 1;
-  const newPatient = {
-    id,
-    name: req.body.name || '',
-    gender: req.body.gender || 'male',
-    age: req.body.age || 0,
-    mobile: req.body.mobile || '',
-    idCard: req.body.idCard || '',
-    ssn: req.body.ssn || '',
-    city: req.body.city || '',
-    avatar: req.body.avatar || '',
-    source: req.body.source || 'consult',
-    createTime: new Date().toISOString().replace('T', ' ').split('.')[0]
-  };
-  patients.push(newPatient);
+  const {
+    name        = '',
+    gender      = 'male',
+    age         = 0,
+    mobile      = '',
+    idCard      = '',
+    ssn         = '',
+    city        = '',
+    avatar      = '',
+    source      = 'consult'
+  } = req.body;
+
+  const stmt = db.prepare(`
+    INSERT INTO patients
+      (name, gender, age, mobile, idCard, ssn, city, avatar, source, createTime)
+      VALUES (?,?,?,?,?,?,?,?,?,datetime('now','localtime'))
+  `);
+  const info = stmt.run(name, gender, age, mobile, idCard, ssn, city, avatar, source);
+  const newPatient = db.prepare('SELECT * FROM patients WHERE id=?').get(info.lastInsertRowid);
   res.status(201).json(newPatient);
 });
 
+/* 查询患者 (支持 source / keyword) */
 app.get('/api/patients', (req, res) => {
   const { source, keyword } = req.query;
-  let result = patients;
+
+  let sql = 'SELECT * FROM patients';
+  const conds = [];
+  const params = [];
+
   if (source) {
-    result = result.filter(p => p.source === source);
+    conds.push('source = ?');
+    params.push(source);
   }
   if (keyword) {
-    const kw = String(keyword);
-    result = result.filter(p =>
-      p.name.includes(kw) ||
-      p.mobile.includes(kw) ||
-      p.idCard.includes(kw) ||
-      p.ssn.includes(kw)
-    );
+    const kw = `%${keyword}%`;
+    conds.push('(name LIKE ? OR mobile LIKE ? OR idCard LIKE ? OR ssn LIKE ?)');
+    params.push(kw, kw, kw, kw);
   }
-  res.json(result);
+  if (conds.length) sql += ' WHERE ' + conds.join(' AND ');
+
+  const list = db.prepare(sql).all(...params);
+  res.json(list);
 });
 
+/* 单个患者 */
 app.get('/api/patients/:id', (req, res) => {
-  const patient = patients.find(p => p.id === Number(req.params.id));
-  if (patient) {
-    res.json(patient);
-  } else {
-    res.status(404).send();
-  }
+  const patient = db.prepare('SELECT * FROM patients WHERE id=?').get(req.params.id);
+  patient ? res.json(patient) : res.sendStatus(404);
 });
 
+/* ---------- MESSAGES ---------- */
+
+/* 获取所有消息（附带 receivers 数组）*/
 app.get('/api/messages', (req, res) => {
-  res.json(messages);
+  const msgs = db.prepare('SELECT * FROM messages ORDER BY id DESC').all();
+  const receiversStmt = db.prepare('SELECT patientId FROM message_receivers WHERE msgId=?');
+
+  const withReceivers = msgs.map(m => ({
+    ...m,
+    receivers: receiversStmt.all(m.id).map(r => r.patientId)
+  }));
+  res.json(withReceivers);
 });
 
+/* 获取单条消息 */
 app.get('/api/messages/:id', (req, res) => {
-  const msg = messages.find(m => m.id === Number(req.params.id));
-  if (msg) {
-    res.json(msg);
-  } else {
-    res.status(404).send();
-  }
+  const msg = db.prepare('SELECT * FROM messages WHERE id=?').get(req.params.id);
+  if (!msg) return res.sendStatus(404);
+
+  const receivers = db.prepare('SELECT patientId FROM message_receivers WHERE msgId=?')
+    .all(msg.id).map(r => r.patientId);
+  res.json({ ...msg, receivers });
 });
 
+/* 新增消息 */
 app.post('/api/messages', (req, res) => {
-  const id = messages.length ? messages[messages.length - 1].id + 1 : 1;
-  const newMsg = {
-    id,
-    title: req.body.title || '',
-    content: req.body.content || '',
-    createTime: new Date().toISOString().replace('T', ' ').split('.')[0],
-    receivers: req.body.receivers || []
-  };
-  messages.push(newMsg);
-  res.status(201).json(newMsg);
+  const { title = '', content = '', receivers = [] } = req.body;
+
+  const insertMsg = db.prepare(`
+    INSERT INTO messages (title, content, createTime)
+    VALUES (?,?,datetime('now','localtime'))
+  `);
+  const info = insertMsg.run(title, content);
+
+  /* 批量插入收件人映射 */
+  if (Array.isArray(receivers) && receivers.length) {
+    const insertRel = db.prepare('INSERT OR IGNORE INTO message_receivers (msgId, patientId) VALUES (?,?)');
+    const insertMany = db.transaction(ids => {
+      for (const pid of ids) insertRel.run(info.lastInsertRowid, pid);
+    });
+    insertMany(receivers);
+  }
+
+  const newMsg = db.prepare('SELECT * FROM messages WHERE id=?').get(info.lastInsertRowid);
+  res.status(201).json({ ...newMsg, receivers });
 });
 
+/* ---------- LISTEN ---------- */
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));

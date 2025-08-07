@@ -26,17 +26,11 @@ interface SourceParams {
   source: 'consult' | 'register' | 'prescribe';
 }
 
-interface LabelMap {
-  consult: string;
-  register: string;
-  prescribe: string;
-}
-
-const labelMap: LabelMap = {
-  consult: '问诊患者',
-  register: '挂号患者',
-  prescribe: '开药患者'
-};
+const labelMap: Map<'consult' | 'register' | 'prescribe', string> = new Map([
+  ['consult', '问诊患者'],
+  ['register', '挂号患者'],
+  ['prescribe', '开药患者']
+]);
 @Entry
 @Component
 struct Huanzheliebiao {
@@ -55,7 +49,7 @@ struct Huanzheliebiao {
       name: p.name,
       gender: p.gender === 'male' ? '男' : '女',
       years: `${p.age}岁`,
-      lable: labelMap[p.source],
+      lable: labelMap.get(p.source) ?? '',
       text: '添加时间',
       time: p.createTime
     }));
@@ -64,7 +58,7 @@ struct Huanzheliebiao {
   async aboutToAppear() {
     const params = router.getParams() as SourceParams;
     this.source = params?.source ?? 'consult';
-    this.title = labelMap[this.source];
+    this.title = labelMap.get(this.source) ?? '';
     await this.loadPatients();
   }
 

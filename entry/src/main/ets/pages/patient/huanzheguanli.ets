@@ -28,12 +28,12 @@ struct Huanzheguanli {
       this.searchResults = [];
       return;
     }
-    const lists = await Promise.all([
+    const lists: Patient[][] = await Promise.all([
       getPatientsBySource('consult', this.searchText),
       getPatientsBySource('register', this.searchText),
       getPatientsBySource('prescribe', this.searchText)
     ]);
-    this.searchResults = ([] as Patient[]).concat(...lists);
+    this.searchResults = lists.reduce((acc: Patient[], cur: Patient[]) => acc.concat(cur), []);
   }
   async aboutToAppear() {
     const results = await Promise.all([

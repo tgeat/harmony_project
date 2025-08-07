@@ -17,10 +17,19 @@ const messages = [
 ];
 
 app.get('/api/patients', (req, res) => {
-  const { source } = req.query;
+  const { source, keyword } = req.query;
   let result = patients;
   if (source) {
-    result = patients.filter(p => p.source === source);
+    result = result.filter(p => p.source === source);
+  }
+  if (keyword) {
+    const kw = String(keyword);
+    result = result.filter(p =>
+      p.name.includes(kw) ||
+      p.mobile.includes(kw) ||
+      p.idCard.includes(kw) ||
+      p.ssn.includes(kw)
+    );
   }
   res.json(result);
 });

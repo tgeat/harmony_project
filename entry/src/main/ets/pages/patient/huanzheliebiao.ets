@@ -31,6 +31,12 @@ interface LabelMap {
   register: string;
   prescribe: string;
 }
+
+const labelMap: LabelMap = {
+  consult: '问诊患者',
+  register: '挂号患者',
+  prescribe: '开药患者'
+};
 @Entry
 @Component
 struct Huanzheliebiao {
@@ -39,26 +45,27 @@ struct Huanzheliebiao {
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   @State patientList:Array<type1> = [];
   @State title: string = '';
-  async aboutToAppear() {
-    const params = router.getParams() as SourceParams;
-    const source = params?.source ?? 'consult';
-    const labelMap: Map<string, string> = new Map([
-      ['consult', '问诊患者'],
-      ['register', '挂号患者'],
-      ['prescribe', '开药患者']
-    ]);
-    this.title = labelMap.get(source) ?? '';
-    const list = await getPatientsBySource(source);
+  @State source: 'consult' | 'register' | 'prescribe' = 'consult';
+
+  async loadPatients() {
+    const list = await getPatientsBySource(this.source, this.searchText);
     this.patientList = list.map((p: Patient): type1 => ({
       id: p.id,
       img: $r('app.media.img_3'),
       name: p.name,
       gender: p.gender === 'male' ? '男' : '女',
       years: `${p.age}岁`,
-      lable: labelMap.get(p.source) ?? '',
+      lable: labelMap[p.source],
       text: '添加时间',
       time: p.createTime
     }));
+  }
+
+  async aboutToAppear() {
+    const params = router.getParams() as SourceParams;
+    this.source = params?.source ?? 'consult';
+    this.title = labelMap[this.source];
+    await this.loadPatients();
   }
 
   build() {
@@ -85,8 +92,16 @@ struct Huanzheliebiao {
         Search({
           placeholder: '搜索患者',
           value: this.searchText
-        }).backgroundColor('#FFFFFF')
-          .borderWidth(0.1).placeholderFont({ size: 15, weight: 300 })
+        })
+          .backgroundColor('#FFFFFF')
+          .borderWidth(0.1)
+          .placeholderFont({ size: 15, weight: 300 })
+          .onChange((value: string) => {
+            this.searchText = value;
+          })
+          .onSubmit(() => {
+            this.loadPatients();
+          })
       }.width('80%').justifyContent(FlexAlign.Center).height('10%')
 
       Column() {

@@ -52,13 +52,14 @@ export async function requestJson<T>(
 }
 
 export async function getPatientsBySource(
-  source: 'consult' | 'register' | 'prescribe'
+  source: 'consult' | 'register' | 'prescribe',
+  keyword: string = ''
 ): Promise<Patient[]> {
   try {
     // ① 发送请求
-    const list = await requestJson<Patient[]>(
-      `${BASE_URL}/patients?source=${source}`
-    );
+    const url = `${BASE_URL}/patients?source=${source}` +
+      (keyword ? `&keyword=${encodeURIComponent(keyword)}` : '');
+    const list = await requestJson<Patient[]>(url);
 
     // ② 成功日志
     console.info('AppLog', `getPatientsBySource 成功 (${source})`, list);

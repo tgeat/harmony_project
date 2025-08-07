@@ -35,7 +35,7 @@ struct Huanzheguanli {
     ]);
     this.searchResults = lists.reduce((acc: Patient[], cur: Patient[]) => acc.concat(cur), []);
   }
-  async aboutToAppear() {
+  async refreshCounts() {
     const results = await Promise.all([
       getPatientsBySource('consult'),
       getPatientsBySource('register'),
@@ -49,6 +49,14 @@ struct Huanzheguanli {
       { title: '挂号患者', count: `${register.length}人`, icon: $r('app.media.arrow_right') },
       { title: '开药患者', count: `${prescribe.length}人`, icon: $r('app.media.arrow_right') }
     ];
+  }
+
+  async aboutToAppear() {
+    await this.refreshCounts();
+  }
+
+  async onPageShow() {
+    await this.refreshCounts();
   }
   build() {
     Column() {

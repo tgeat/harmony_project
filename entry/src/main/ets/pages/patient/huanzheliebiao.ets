@@ -42,8 +42,12 @@ struct Huanzheliebiao {
   async aboutToAppear() {
     const params = router.getParams() as SourceParams;
     const source = params?.source ?? 'consult';
-    const labelMap: LabelMap = { consult: '问诊患者', register: '挂号患者', prescribe: '开药患者' };
-    this.title = labelMap[source];
+    const labelMap: Map<string, string> = new Map([
+      ['consult', '问诊患者'],
+      ['register', '挂号患者'],
+      ['prescribe', '开药患者']
+    ]);
+    this.title = labelMap.get(source) ?? '';
     const list = await getPatientsBySource(source);
     this.patientList = list.map((p: Patient): type1 => ({
       id: p.id,
@@ -51,7 +55,7 @@ struct Huanzheliebiao {
       name: p.name,
       gender: p.gender === 'male' ? '男' : '女',
       years: `${p.age}岁`,
-      lable: labelMap[p.source],
+      lable: labelMap.get(p.source) ?? '',
       text: '添加时间',
       time: p.createTime
     }));

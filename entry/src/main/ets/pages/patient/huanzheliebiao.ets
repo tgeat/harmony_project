@@ -60,7 +60,7 @@ struct Huanzheliebiao {
             .margin({ left: 10 })
         }
       }.width('100%').onClick(() => {
-        router.pushUrl({ url: 'pages/keshi' })
+        router.back()
       })
 
       Divider()

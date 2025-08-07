@@ -42,9 +42,10 @@ struct Huanzheguanli {
           .fontColor('#0062FF')
           .fontSize(16)
           .margin({right:10})
-      }.justifyContent(FlexAlign.SpaceBetween).width('100%').onClick(()=>{
-        router.pushUrl({url:'pages/keshi'})
-      })
+          .onClick(()=>{
+            router.pushUrl({url:'pages/patient/xiaoxiliebiao'})
+          })
+      }.justifyContent(FlexAlign.SpaceBetween).width('100%')
       Divider()
         .width('100%')
         .strokeWidth(1)
@@ -98,13 +99,13 @@ struct Huanzheguanli {
               // 根据不同的列表项跳转到不同的页面
               switch (index) {
                 case 0:
-                  router.pushUrl({ url: 'pages/' });
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao' });
                   break;
                 case 1:
-                  router.pushUrl({ url: 'pages/' });
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao'});
                   break;
                 case 2:
-                  router.pushUrl({ url: 'pages/' });
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao'});
                   break;
               }
             })

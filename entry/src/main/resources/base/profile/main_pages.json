@@ -1,6 +1,10 @@
 {
   "src": [
-    "pages/Index"
+    "pages/Index",
+    "pages/patient/xiaoxiliebiao",
+    "pages/patient/huanzheliebiao",
+    "pages/patient/huanzhexinxi",
+    "pages/patient/huanzheguanli"
   ]
 }
 

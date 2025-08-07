@@ -38,12 +38,12 @@ struct Huanzheliebiao {
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   @State patientList:Array<type1> = [];
+  @State searchResults:Array<type1> = [];
   @State title: string = '';
   @State source: 'consult' | 'register' | 'prescribe' = 'consult';
 
-  async loadPatients() {
-    const list = await getPatientsBySource(this.source, this.searchText);
-    this.patientList = list.map((p: Patient): type1 => ({
+  mapPatient(p: Patient): type1 {
+    return {
       id: p.id,
       img: $r('app.media.img_3'),
       name: p.name,
@@ -52,7 +52,21 @@ struct Huanzheliebiao {
       lable: labelMap.get(p.source) ?? '',
       text: '添加时间',
       time: p.createTime
-    }));
+    };
+  }
+
+  async loadPatients() {
+    const list = await getPatientsBySource(this.source);
+    this.patientList = list.map((p: Patient): type1 => this.mapPatient(p));
+  }
+
+  async onSearch() {
+    if (!this.searchText) {
+      this.searchResults = [];
+      return;
+    }
+    const list = await getPatientsBySource(this.source, this.searchText);
+    this.searchResults = list.map((p: Patient): type1 => this.mapPatient(p));
   }
 
   async aboutToAppear() {
@@ -94,9 +108,30 @@ struct Huanzheliebiao {
             this.searchText = value;
           })
           .onSubmit(() => {
-            this.loadPatients();
+            this.onSearch();
           })
       }.width('80%').justifyContent(FlexAlign.Center).height('10%')
+
+      if (this.searchResults.length > 0) {
+        List() {
+          ForEach(this.searchResults, (item: type1) => {
+            ListItem() {
+              Row() {
+                Text(item.name)
+                  .fontSize(16)
+                  .margin({ left: 20 })
+              }
+              .width('100%')
+              .height('8%')
+              .padding(10)
+              .backgroundColor('#FFFFFF')
+              .onClick(() => {
+                router.pushUrl({ url: 'pages/patient/huanzhexinxi', params: { id: item.id } });
+              })
+            }
+          })
+        }.width('100%').divider(this.egDivider)
+      }
 
       Column() {
         Row().width('100%').height(10).backgroundColor('#E4E4E4')

@@ -6,12 +6,22 @@ import { createPatient } from '../../service/patientService';
 struct Xinjianhuanzhe {
   @State name: string = '';
   @State mobile: string = '';
+  @State gender: 'male' | 'female' = 'male';
+  @State age: string = '';
+  @State idCard: string = '';
+  @State ssn: string = '';
+  @State city: string = '';
   @State source: 'consult' | 'register' | 'prescribe' = 'consult';
 
   async submit() {
     await createPatient({
       name: this.name,
       mobile: this.mobile,
+      gender: this.gender,
+      age: Number(this.age),
+      idCard: this.idCard,
+      ssn: this.ssn,
+      city: this.city,
       source: this.source
     });
     router.back();
@@ -49,6 +59,56 @@ struct Xinjianhuanzhe {
         .margin({ top: 20, left: 20, right: 20 })
         .onChange((value: string) => {
           this.mobile = value;
+        })
+
+      Row() {
+        Button('男')
+          .onClick(() => {
+            this.gender = 'male';
+          })
+        Button('女')
+          .margin({ left: 10 })
+          .onClick(() => {
+            this.gender = 'female';
+          })
+      }
+      .margin({ top: 20, left: 20, right: 20 })
+      .justifyContent(FlexAlign.Center)
+
+      TextInput({
+        placeholder: '年龄',
+        text: this.age
+      })
+        .margin({ top: 20, left: 20, right: 20 })
+        .onChange((value: string) => {
+          this.age = value;
+        })
+
+      TextInput({
+        placeholder: '身份证号',
+        text: this.idCard
+      })
+        .margin({ top: 20, left: 20, right: 20 })
+        .onChange((value: string) => {
+          this.idCard = value;
+        })
+
+      TextInput({
+        placeholder: '社保号',
+        text: this.ssn
+      })
+        .margin({ top: 20, left: 20, right: 20 })
+        .onChange((value: string) => {
+          this.ssn = value;
+        })
+
+      TextInput({
+        placeholder: '城市',
+        text: this.city
+      })
+        .margin({ top: 20, left: 20, right: 20 })
+        .onChange((value: string) => {
+          this.city = value;
         })
 
       Row() {

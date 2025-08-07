@@ -4,15 +4,24 @@
     "type": "entry",
     "description": "$string:module_desc",
     "mainElement": "EntryAbility",
-    "deviceTypes": [
-      "phone",
-      "tablet",
-      "2in1",
-      "wearable"
-    ],
+    "deviceTypes": ["phone", "tablet", "2in1", "wearable"],
     "deliveryWithInstall": true,
-    "installationFree": false,
+    "installationFree": true,
     "pages": "$profile:main_pages",
+
+    /* === 权限声明，系统在安装阶段自动授予 normal permission === */
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+      /* 如果后续需要判断网络类型，可再加：
+      ,{
+        "name": "ohos.permission.GET_NETWORK_INFO",
+        "reason": "获取当前网络状态"
+      } */
+    ],
+
+    /* === Ability 列表 === */
     "abilities": [
       {
         "name": "EntryAbility",
@@ -25,32 +34,26 @@
         "exported": true,
         "skills": [
           {
-            "entities": [
-              "entity.system.home"
-            ],
-            "actions": [
-              "action.system.home"
-            ]
+            "entities": ["entity.system.home"],
+            "actions": ["action.system.home"]
           }
-        ],
-        "permissions": [
-          "ohos.permission.INTERNET",
-          "ohos.permission.GET_NETWORK_INFO"
         ]
       }
     ],
+
+    /* === 扩展 Ability（若无可删除整个节点） === */
     "extensionAbilities": [
       {
         "name": "EntryBackupAbility",
         "srcEntry": "./ets/entrybackupability/EntryBackupAbility.ets",
         "type": "backup",
-        "exported": false,
+        "exported": true,
         "metadata": [
           {
             "name": "ohos.extension.backup",
             "resource": "$profile:backup_config"
           }
-        ],
+        ]
       }
     ]
   }

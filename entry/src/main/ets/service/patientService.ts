@@ -1,7 +1,7 @@
 import http from '@ohos.net.http';
 import type { Patient, Message } from '../model/patient';
 
-const BASE_URL = 'https://example.com/api';
+const BASE_URL = 'http://localhost:3000/api';
 
 export function getPatientsBySource(source: 'consult' | 'register' | 'prescribe'): Promise<Patient[]> {
   return http.fetch(`${BASE_URL}/patients?source=${source}`).then(resp => resp.json() as Promise<Patient[]>);

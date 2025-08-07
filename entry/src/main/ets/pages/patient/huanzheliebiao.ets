@@ -1,5 +1,6 @@
 import router from '@ohos.router';
 import image from '@ohos.multimedia.image';
+import { getPatientsBySource } from '../../service/patientService';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -10,6 +11,7 @@ class DividerTmp {
   }
 }
 interface type1{
+  id:number;
   img:Resource;
   name:string;
   gender:string;
@@ -24,27 +26,25 @@ struct Huanzheliebiao {
   @State message: string = 'Hello World';
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
-  private patientlist:Array<type1>=
-    [{ img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-      { img:$r('app.media.img_3'),name:'李四',gender:'男',years:'43岁',lable:'视频问诊',text:'添加时间',time:'2020-04-03', },
-    ]
-
+  @State patientList:Array<type1> = [];
+  @State title: string = '';
+  async aboutToAppear() {
+    const params = router.getParams() as { source: 'consult' | 'register' | 'prescribe' };
+    const source = params?.source ?? 'consult';
+    const labelMap: Record<string, string> = { consult: '问诊患者', register: '挂号患者', prescribe: '开药患者' };
+    this.title = labelMap[source];
+    const list = await getPatientsBySource(source);
+    this.patientList = list.map(p => ({
+      id: p.id,
+      img: $r('app.media.img_3'),
+      name: p.name,
+      gender: p.gender === 'male' ? '男' : '女',
+      years: `${p.age}岁`,
+      lable: labelMap[p.source],
+      text: '添加时间',
+      time: p.createTime
+    }));
+  }
 
   build() {
     Column() {
@@ -54,7 +54,7 @@ struct Huanzheliebiao {
             .width(10)
             .height(30)
             .margin({ left: 10 })
-          Text('问诊患者')
+          Text(this.title)
             .fontSize(20)
             .fontWeight(600)
             .margin({ left: 10 })
@@ -89,7 +89,7 @@ Column(){
     .color('#E5E5E5').margin({top:10})
 }
       List() {
-        ForEach(this.patientlist, (item: type1, index) => {
+        ForEach(this.patientList, (item: type1, index) => {
           ListItem() {
             Row() {
               Image(item.img)
@@ -127,7 +127,7 @@ Column(){
             .padding(10)
             .backgroundColor('#FFFFFF')
             .onClick(() => {
-                  router.pushUrl({ url: 'pages/' });
+                  router.pushUrl({ url: 'pages/patient/huanzhexinxi', params: { id: item.id } });
               })
           }
         })

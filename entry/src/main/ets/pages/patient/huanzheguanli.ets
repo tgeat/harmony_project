@@ -1,5 +1,5 @@
-//import { Router } from '@kit.ArkUI';
 import router from '@ohos.router';
+import { getPatientsBySource } from '../../service/patientService';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -20,11 +20,19 @@ struct Huanzheguanli {
   @State message: string = 'Hello World';
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
-  private patientData: Array<Type1> = [
-    { title: '问诊患者', count: '20人', icon: $r('app.media.arrow_right') },
-    { title: '挂号患者', count: '13人', icon: $r('app.media.arrow_right') },
-    { title: '开药患者', count: '2人', icon: $r('app.media.arrow_right') }
-  ];
+  @State patientData: Array<Type1> = [];
+  async aboutToAppear() {
+    const [consult, register, prescribe] = await Promise.all([
+      getPatientsBySource('consult'),
+      getPatientsBySource('register'),
+      getPatientsBySource('prescribe')
+    ]);
+    this.patientData = [
+      { title: '问诊患者', count: `${consult.length}人`, icon: $r('app.media.arrow_right') },
+      { title: '挂号患者', count: `${register.length}人`, icon: $r('app.media.arrow_right') },
+      { title: '开药患者', count: `${prescribe.length}人`, icon: $r('app.media.arrow_right') }
+    ];
+  }
   build() {
     Column() {
       Row() {
@@ -99,13 +107,13 @@ struct Huanzheguanli {
               // 根据不同的列表项跳转到不同的页面
               switch (index) {
                 case 0:
-                  router.pushUrl({ url: 'pages/patient/huanzheliebiao' });
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao', params: { source: 'consult' } });
                   break;
                 case 1:
-                  router.pushUrl({ url: 'pages/patient/huanzheliebiao'});
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao', params: { source: 'register' } });
                   break;
                 case 2:
-                  router.pushUrl({ url: 'pages/patient/huanzheliebiao'});
+                  router.pushUrl({ url: 'pages/patient/huanzheliebiao', params: { source: 'prescribe' } });
                   break;
               }
             })
@@ -116,6 +124,3 @@ struct Huanzheguanli {
     }
   }
 }
-
-
-

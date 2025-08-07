@@ -1,4 +1,5 @@
 import router from '@ohos.router';
+import { getMessages } from '../../service/patientService';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -21,17 +22,14 @@ struct Xiaoxiliebiao {
   @State message: string = 'Hello World';
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
-private xiaoxilist:Array<type2>=[{title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-  {title:'停诊通知',content:'由于某种原因，原定于2020.0413日停诊......',img:$r('app.media.arrow_right'),date:'2020.04.13',time:'13:00:21'},
-]
+  @State xiaoxilist:Array<type2>=[];
+  async aboutToAppear() {
+    const list = await getMessages();
+    this.xiaoxilist = list.map(m => {
+      const parts = m.createTime.split(' ');
+      return { title: m.title, content: m.content, img: $r('app.media.arrow_right'), date: parts[0], time: parts[1] };
+    });
+  }
   build() {
     Column() {
       Row() {

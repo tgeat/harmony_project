@@ -1,3 +1,5 @@
+import router from '@ohos.router';
+import { getPatientDetail } from '../../service/patientService';
 class DividerTmp {
   strokeWidth: Length = 1;
   color: ResourceColor = '#ffe9f0f0';
@@ -15,16 +17,22 @@ interface Type1 {
 @Component
 struct Huanzhexinxi {
   @State message: string = 'Hello World';
-  private patientData: Array<Type1> = [
-    { title: '患者姓名', count: '李四'},
-    { title: '性别', count: '女' },
-    { title: '年龄', count: '32' },
-    { title: '电话号码', count: '188****1234' },
-    { title: '身份证号', count: '110101********0012' },
-    { title: '社保卡', count: '1201***9991' },
-    { title: '地区', count: '北京 朝阳区' },
-  ];
+  @State patientData: Array<Type1> = [];
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
+  async aboutToAppear() {
+    const params = router.getParams() as { id: number };
+    const id = params?.id ?? 0;
+    const p = await getPatientDetail(id);
+    this.patientData = [
+      { title: '患者姓名', count: p.name},
+      { title: '性别', count: p.gender === 'male' ? '男' : '女' },
+      { title: '年龄', count: `${p.age}` },
+      { title: '电话号码', count: p.mobile },
+      { title: '身份证号', count: p.idCard },
+      { title: '社保卡', count: p.ssn },
+      { title: '地区', count: p.city },
+    ];
+  }
   build() {
     Column() {
       Row() {

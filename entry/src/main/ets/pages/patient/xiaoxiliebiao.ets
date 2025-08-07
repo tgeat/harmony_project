@@ -24,6 +24,7 @@ struct Xiaoxiliebiao {
   @State searchText: string = '';
   @State egDivider: DividerTmp = new DividerTmp(1, '#ffe9f0f0');
   @State xiaoxilist:Array<type2>=[];
+  @State searchResults:Array<type2> = [];
   async aboutToAppear() {
     const list = await getMessages();
     this.xiaoxilist = list.map((m: Message): type2 => {
@@ -36,6 +37,16 @@ struct Xiaoxiliebiao {
         time: parts[1]
       };
       return item;
+    });
+  }
+
+  onSearch() {
+    if (!this.searchText) {
+      this.searchResults = [];
+      return;
+    }
+    this.searchResults = this.xiaoxilist.filter((item: type2) => {
+      return item.title.includes(this.searchText) || item.content.includes(this.searchText);
     });
   }
   build() {
@@ -64,8 +75,74 @@ struct Xiaoxiliebiao {
           placeholder: '搜索消息关键字',
           value: this.searchText
         }).backgroundColor('#FFFFFF')
-          .borderWidth(0.1).placeholderFont({size:15,weight:300})
+          .borderWidth(0.1)
+          .placeholderFont({size:15,weight:300})
+          .onChange((value: string) => {
+            this.searchText = value;
+          })
+          .onSubmit(() => {
+            this.onSearch();
+          })
       }.width('80%').justifyContent(FlexAlign.Center).height('10%')
+
+      if (this.searchResults.length > 0) {
+        Column(){
+          Row(){
+            Text('搜索结果')
+              .margin({left:8})
+              .fontSize(18)
+              .fontWeight(300)
+          }.width('100%').margin({top:15})
+          Divider()
+            .strokeWidth(0.5)
+            .color('#E5E5E5').margin({top:10})
+        }
+
+        List() {
+          ForEach(this.searchResults, (item: type2, index) => {
+            ListItem() {
+              Column({space:10}) {
+               Row(){
+                 Text(item.title)
+                   .fontSize(16)
+               }.width('100%')  .margin({left:15})
+                  Row(){
+                 Text(item.content)
+                   .fontSize(15)
+                   .fontColor('#808080')
+                   .margin({left:20})
+                   .fontWeight(200)
+                    Image(item.img)
+                      .height(20)
+                      .width(20)
+                      .margin({left:30})
+                  }.width('100%')
+                Row(){
+                 Text(item.date)
+                   .fontSize(15)
+                   .fontColor('#808080')
+                   .fontWeight(200)
+                   .margin({left:15})
+                  Text(item.time)
+                    .fontSize(15)
+                    .fontColor('#808080')
+                    .fontWeight(200)
+                    .margin({left:15})
+                }.width('100%')
+              }
+            }
+              .width('100%')
+              .height('12%')
+              .padding(10)
+              .backgroundColor('#FFFFFF')
+          })
+          ListItem(){
+            Column(){
+            }.height(40)
+          }
+        }.width('100%').divider(this.egDivider)
+        .backgroundColor('#F5F5F5')
+      }
       Column() {
         Row().width('100%').height(10).backgroundColor('#E4E4E4')
       }
